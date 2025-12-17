@@ -28,7 +28,9 @@ class TextFieldInput extends StatelessWidget {
         hintText: hintText,
         filled: true,
         contentPadding: const EdgeInsets.all(8),
-        suffixIcon: suffixIcon,
+        suffixIcon: suffixIcon == null
+            ? null
+            : SizedBox(height: 24, width: 24, child: Center(child: suffixIcon)),
         border: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.transparent,

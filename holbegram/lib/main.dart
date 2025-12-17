@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'widgets/text_field.dart';
+import 'screens/login_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,30 +19,9 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFieldInput(
-                controller: emailController,
-                ispassword: false,
-                hintText: 'Email',
-                keyboardType: TextInputType.emailAddress,
-                suffixIcon: null,
-              ),
-              const SizedBox(height: 16),
-              TextFieldInput(
-                controller: passwordController,
-                ispassword: true,
-                hintText: 'Password',
-                keyboardType: TextInputType.text,
-                suffixIcon: const Icon(Icons.visibility_off),
-              ),
-            ],
-          ),
-        ),
+      home: LoginScreen(
+        emailController: emailController,
+        passwordController: passwordController,
       ),
     );
   }
