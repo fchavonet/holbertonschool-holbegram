@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/text_field.dart';
 import 'login_screen.dart';
 
+// ignore: must_be_immutable
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController usernameController;

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/text_field.dart';
 import 'signup_screen.dart';
+import '../methods/auth_methods.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -98,7 +100,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             const Color.fromARGB(218, 226, 37, 24),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          String res = await AuthMethode().login(
+                            email: widget.emailController.text,
+                            password: widget.passwordController.text,
+                          );
+
+                          if (res == "success") {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Login")),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(res)));
+                          }
+                        },
                         child: const Text(
                           'Log in',
                           style: TextStyle(color: Colors.white),
