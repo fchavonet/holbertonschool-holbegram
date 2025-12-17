@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'widgets/text_field.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +14,36 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Center(child: Text('Holbegram'))),
+      home: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFieldInput(
+                controller: emailController,
+                ispassword: false,
+                hintText: 'Email',
+                keyboardType: TextInputType.emailAddress,
+                suffixIcon: null,
+              ),
+              const SizedBox(height: 16),
+              TextFieldInput(
+                controller: passwordController,
+                ispassword: true,
+                hintText: 'Password',
+                keyboardType: TextInputType.text,
+                suffixIcon: const Icon(Icons.visibility_off),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
