@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/text_field.dart';
+import '../../widgets/text_field.dart';
 import 'signup_screen.dart';
-import '../methods/auth_methods.dart';
+import '../../methods/auth_methods.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
