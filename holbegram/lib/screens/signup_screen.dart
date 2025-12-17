@@ -156,7 +156,15 @@ class _SignUpState extends State<SignUp> {
                         const Text('Have an account? '),
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(
+                                  emailController: TextEditingController(),
+                                  passwordController: TextEditingController(),
+                                ),
+                              ),
+                            );
                           },
                           child: const Text(
                             'Log in',
