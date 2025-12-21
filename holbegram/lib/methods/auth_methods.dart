@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
 
@@ -10,21 +10,20 @@ class AuthMethode {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// LOGIN
   Future<String> login({
     required String email,
     required String password,
   }) async {
-    String res = "Some error occurred";
+    String res = "Some error occurred :( !)";
 
     try {
       if (email.isEmpty || password.isEmpty) {
-        return "Please fill all the fields";
+        return "Please fill all the fields...";
       }
 
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-      res = "success";
+      res = "Success!";
     } catch (err) {
       res = err.toString();
     }
@@ -32,7 +31,6 @@ class AuthMethode {
     return res;
   }
 
-  /// SIGN UP
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -66,7 +64,7 @@ class AuthMethode {
 
       await _firestore.collection("users").doc(user.uid).set(users.toJson());
 
-      res = "success";
+      res = "Success";
     } catch (err) {
       res = err.toString();
     }

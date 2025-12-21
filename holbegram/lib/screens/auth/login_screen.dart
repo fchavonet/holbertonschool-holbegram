@@ -3,13 +3,11 @@ import '../../widgets/text_field.dart';
 import 'signup_screen.dart';
 import '../../methods/auth_methods.dart';
 
-// ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  bool _passwordVisible = true;
 
-  LoginScreen({
+  const LoginScreen({
     super.key,
     required this.emailController,
     required this.passwordController,
@@ -20,11 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget._passwordVisible = true;
-  }
+  bool _passwordVisible = false;
 
   @override
   void dispose() {
@@ -40,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 28),
@@ -70,20 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFieldInput(
                       controller: widget.passwordController,
-                      ispassword: !widget._passwordVisible,
+                      ispassword: !_passwordVisible,
                       hintText: 'Password',
                       keyboardType: TextInputType.visiblePassword,
                       suffixIcon: IconButton(
-                        alignment: Alignment.bottomLeft,
                         icon: Icon(
-                          widget._passwordVisible
+                          _passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: const Color.fromARGB(218, 226, 37, 24),
                         ),
                         onPressed: () {
                           setState(() {
-                            widget._passwordVisible = !widget._passwordVisible;
+                            _passwordVisible = !_passwordVisible;
                           });
                         },
                       ),
@@ -101,20 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          String res = await AuthMethode().login(
+                          final res = await AuthMethode().login(
                             email: widget.emailController.text,
                             password: widget.passwordController.text,
                           );
 
-                          if (res == "success") {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Login")),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text(res)));
-                          }
+                          if (!mounted) return;
+
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(res)));
                         },
                         child: const Text(
                           'Log in',
@@ -137,10 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
 
                     const SizedBox(height: 24),
+
                     Column(
                       children: [
                         const Divider(thickness: 2),
-
                         const SizedBox(height: 12),
 
                         Row(
@@ -152,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SignUp(
+                                    builder: (_) => SignUp(
                                       emailController: TextEditingController(),
                                       usernameController:
                                           TextEditingController(),
@@ -178,7 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 12),
 
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Expanded(child: Divider(thickness: 2)),
                             Padding(
@@ -194,7 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
 
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Image(

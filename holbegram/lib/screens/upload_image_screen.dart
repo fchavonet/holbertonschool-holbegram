@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../methods/auth_methods.dart';
+import './auth/login_screen.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;
@@ -22,7 +23,6 @@ class AddPicture extends StatefulWidget {
 class _AddPictureState extends State<AddPicture> {
   Uint8List? _image;
 
-  /// Select image from gallery
   void selectImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -35,7 +35,6 @@ class _AddPictureState extends State<AddPicture> {
     }
   }
 
-  /// Select image from camera
   void selectImageFromCamera() async {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.camera);
@@ -141,24 +140,26 @@ class _AddPictureState extends State<AddPicture> {
                       const Color.fromARGB(218, 226, 37, 24),
                     ),
                   ),
-                  onPressed: () async {
-                    String res = await AuthMethode().signUpUser(
+                  onPressed: () {
+                    AuthMethode().signUpUser(
                       email: widget.email,
                       password: widget.password,
                       username: widget.username,
                       file: _image,
                     );
 
-                    if (!mounted) return;
-
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(res == "success" ? "Success" : res),
-                          duration: const Duration(seconds: 2),
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => LoginScreen(
+                          emailController: TextEditingController(),
+                          passwordController: TextEditingController(),
                         ),
-                      );
-                    });
+                      ),
+                      (route) => false,
+                    );
                   },
                   child: const Text(
                     'Next',

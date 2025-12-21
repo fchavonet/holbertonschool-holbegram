@@ -3,15 +3,13 @@ import '../../widgets/text_field.dart';
 import 'login_screen.dart';
 import '../upload_image_screen.dart';
 
-// ignore: must_be_immutable
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController usernameController;
   final TextEditingController passwordController;
   final TextEditingController passwordConfirmController;
-  bool _passwordVisible = true;
 
-  SignUp({
+  const SignUp({
     super.key,
     required this.emailController,
     required this.usernameController,
@@ -24,11 +22,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  @override
-  void initState() {
-    super.initState();
-    widget._passwordVisible = true;
-  }
+  // 🔒 état UI correctement placé
+  bool _passwordVisible = false;
 
   @override
   void dispose() {
@@ -47,7 +42,6 @@ class _SignUpState extends State<SignUp> {
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
                 'Holbegram',
@@ -91,19 +85,19 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.passwordController,
-                      ispassword: !widget._passwordVisible,
+                      ispassword: !_passwordVisible,
                       hintText: 'Password',
                       keyboardType: TextInputType.visiblePassword,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          widget._passwordVisible
+                          _passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: const Color.fromARGB(218, 226, 37, 24),
                         ),
                         onPressed: () {
                           setState(() {
-                            widget._passwordVisible = !widget._passwordVisible;
+                            _passwordVisible = !_passwordVisible;
                           });
                         },
                       ),
@@ -113,19 +107,19 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.passwordConfirmController,
-                      ispassword: !widget._passwordVisible,
+                      ispassword: !_passwordVisible,
                       hintText: 'Confirm Password',
                       keyboardType: TextInputType.visiblePassword,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          widget._passwordVisible
+                          _passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: const Color.fromARGB(218, 226, 37, 24),
                         ),
                         onPressed: () {
                           setState(() {
-                            widget._passwordVisible = !widget._passwordVisible;
+                            _passwordVisible = !_passwordVisible;
                           });
                         },
                       ),
@@ -146,7 +140,7 @@ class _SignUpState extends State<SignUp> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddPicture(
+                              builder: (_) => AddPicture(
                                 email: widget.emailController.text,
                                 username: widget.usernameController.text,
                                 password: widget.passwordController.text,
@@ -172,7 +166,7 @@ class _SignUpState extends State<SignUp> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginScreen(
+                                builder: (_) => LoginScreen(
                                   emailController: TextEditingController(),
                                   passwordController: TextEditingController(),
                                 ),
