@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../methods/auth_methods.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;
@@ -63,15 +64,15 @@ class _AddPictureState extends State<AddPicture> {
 
               Image.asset('assets/images/logo.png', width: 80, height: 60),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 42),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Hello, John Doe Welcome to\nHolbegram.',
+                      'Hello, ${widget.username} Welcome to\nHolbegram.',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -140,7 +141,25 @@ class _AddPictureState extends State<AddPicture> {
                       const Color.fromARGB(218, 226, 37, 24),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    String res = await AuthMethode().signUpUser(
+                      email: widget.email,
+                      password: widget.password,
+                      username: widget.username,
+                      file: _image,
+                    );
+
+                    if (!mounted) return;
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(res == "success" ? "Success" : res),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    });
+                  },
                   child: const Text(
                     'Next',
                     style: TextStyle(color: Colors.white),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/text_field.dart';
 import 'login_screen.dart';
+import '../upload_image_screen.dart';
 
 // ignore: must_be_immutable
 class SignUp extends StatefulWidget {
@@ -141,7 +142,18 @@ class _SignUpState extends State<SignUp> {
                             const Color.fromARGB(218, 226, 37, 24),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddPicture(
+                                email: widget.emailController.text,
+                                username: widget.usernameController.text,
+                                password: widget.passwordController.text,
+                              ),
+                            ),
+                          );
+                        },
                         child: const Text(
                           'Sign up',
                           style: TextStyle(color: Colors.white),
