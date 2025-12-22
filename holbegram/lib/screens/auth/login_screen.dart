@@ -100,9 +100,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           if (!mounted) return;
 
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(res)));
+                          if (res == "success") {
+                          } else {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(res)));
+                          }
                         },
                         child: const Text(
                           'Log in',

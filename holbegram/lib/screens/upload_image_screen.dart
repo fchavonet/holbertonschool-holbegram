@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../methods/auth_methods.dart';
-import './auth/login_screen.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;
@@ -148,18 +147,9 @@ class _AddPictureState extends State<AddPicture> {
                       file: _image,
                     );
 
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (_) => LoginScreen(
-                          emailController: TextEditingController(),
-                          passwordController: TextEditingController(),
-                        ),
-                      ),
-                      (route) => false,
-                    );
+                    if (!mounted) return;
+
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   child: const Text(
                     'Next',

@@ -22,7 +22,6 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  // 🔒 état UI correctement placé
   bool _passwordVisible = false;
 
   @override

@@ -10,6 +10,7 @@ class AuthMethode {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Login.
   Future<String> login({
     required String email,
     required String password,
@@ -23,7 +24,7 @@ class AuthMethode {
 
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-      res = "Success!";
+      res = "success";
     } catch (err) {
       res = err.toString();
     }
@@ -31,26 +32,21 @@ class AuthMethode {
     return res;
   }
 
+  /// Signup.
   Future<String> signUpUser({
     required String email,
     required String password,
     required String username,
     Uint8List? file,
   }) async {
-    String res = "Some error occurred";
-
     try {
-      if (email.isEmpty || password.isEmpty || username.isEmpty) {
-        return "Please fill all the fields";
-      }
+      UserCredential cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      User user = userCredential.user!;
-
-      Users users = Users(
-        uid: user.uid,
+      Users user = Users(
+        uid: cred.user!.uid,
         email: email,
         username: username,
         bio: '',
@@ -62,16 +58,19 @@ class AuthMethode {
         searchKey: username[0].toLowerCase(),
       );
 
-      await _firestore.collection("users").doc(user.uid).set(users.toJson());
+      await _firestore.collection('users').doc(user.uid).set(user.toJson());
 
-      res = "Success";
-    } catch (err) {
-      res = err.toString();
+      return "success";
+    } catch (e) {
+      return e.toString();
     }
-
-    return res;
   }
 
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  /// Get user details
   Future<Users> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
