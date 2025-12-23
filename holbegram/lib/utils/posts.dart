@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/pages/methods/post_storage.dart';
+
 class Posts extends StatefulWidget {
   const Posts({super.key});
 
@@ -27,8 +29,11 @@ class _PostsState extends State<Posts> {
         return ListView.builder(
           itemCount: docs.length,
           itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
+            final doc = docs[index];
+            final data = doc.data() as Map<String, dynamic>;
 
+            final String postId = doc.id;
+            final String publicId = (data['publicId'] ?? '') as String;
             final String username = (data['username'] ?? '') as String;
             final String caption = (data['caption'] ?? '') as String;
             final String profImage = (data['profImage'] ?? '') as String;
@@ -36,14 +41,10 @@ class _PostsState extends State<Posts> {
 
             return SingleChildScrollView(
               child: Container(
-                margin: EdgeInsetsGeometry.lerp(
-                  const EdgeInsets.all(8),
-                  const EdgeInsets.all(8),
-                  10,
-                ),
+                margin: const EdgeInsets.all(8),
                 height: 540,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Column(
@@ -79,7 +80,9 @@ class _PostsState extends State<Posts> {
                           const Spacer(),
                           IconButton(
                             icon: const Icon(Icons.more_horiz),
-                            onPressed: () {
+                            onPressed: () async {
+                              await PostStorage().deletePost(postId, publicId);
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Post Deleted')),
                               );
@@ -88,7 +91,6 @@ class _PostsState extends State<Posts> {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Align(
@@ -96,9 +98,7 @@ class _PostsState extends State<Posts> {
                         child: Text(caption),
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Container(
                       width: 350,
                       height: 350,
@@ -121,9 +121,7 @@ class _PostsState extends State<Posts> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(

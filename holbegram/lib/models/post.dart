@@ -6,6 +6,7 @@ class Post {
   final String username;
   final List likes;
   final String postId;
+  final String publicId;
   final DateTime datePublished;
   final String postUrl;
   final String profImage;
@@ -16,6 +17,7 @@ class Post {
     required this.username,
     required this.likes,
     required this.postId,
+    required this.publicId,
     required this.datePublished,
     required this.postUrl,
     required this.profImage,
@@ -42,6 +44,7 @@ class Post {
       username: (data['username'] ?? '') as String,
       likes: likesList,
       postId: (data['postId'] ?? '') as String,
+      publicId: (data['publicId'] ?? '') as String,
       datePublished: published,
       postUrl: (data['postUrl'] ?? '') as String,
       profImage: (data['profImage'] ?? '') as String,
@@ -55,6 +58,7 @@ class Post {
       'username': username,
       'likes': likes,
       'postId': postId,
+      'publicId': publicId,
       'datePublished': datePublished,
       'postUrl': postUrl,
       'profImage': profImage,

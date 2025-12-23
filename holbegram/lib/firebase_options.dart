@@ -53,12 +53,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBhceh63iWCZEP1OwKmVX1PduY-51pY2XU',
-    appId: '1:326376520546:android:d0874feca8ad5762df4a3b',
-    messagingSenderId: '326376520546',
-    projectId: 'holbegram-6809',
-    databaseURL:
-        'https://holbegram-6809-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'holbegram-6809.firebasestorage.app',
+    apiKey: 'AIzaSyA2XKrZYxwYjYbKf2erhGB1FT5mNolpdsA',
+    appId: '1:553911048542:android:edbdd8210c8a8861d797cf',
+    messagingSenderId: '553911048542',
+    projectId: 'holbegram-abe8e',
+    databaseURL: 'https://holbegram-abe8e-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'holbegram-abe8e.firebasestorage.app',
   );
+
 }
