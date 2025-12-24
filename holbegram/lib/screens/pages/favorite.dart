@@ -22,16 +22,28 @@ class Favorite extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (!userSnapshot.hasData || userSnapshot.data == null) {
-              return const Center(child: Text('No favorites...'));
+            // 🔐 DOCUMENT INEXISTANT → AUCUN FAVORI
+            if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+              return const Center(
+                child: Text(
+                  'No favorites yet',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              );
             }
 
-            final saved = List<String>.from(userSnapshot.data!['saved'] ?? []);
+            final data =
+                userSnapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+            final List<String> saved =
+                data.containsKey('saved') && data['saved'] is List
+                ? List<String>.from(data['saved'])
+                : [];
 
             if (saved.isEmpty) {
               return const Center(
                 child: Text(
-                  'No favorites yet...',
+                  'No favorites yet',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               );
@@ -45,6 +57,18 @@ class Favorite extends StatelessWidget {
               builder: (context, postSnapshot) {
                 if (postSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!postSnapshot.hasData || postSnapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No favorites yet',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
                 }
 
                 final posts = postSnapshot.data!.docs;
