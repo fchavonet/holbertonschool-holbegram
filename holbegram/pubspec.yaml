@@ -21,6 +21,7 @@ dependencies:
   bottom_navy_bar: ^6.1.0
   uuid: ^4.5.2
   firebase_storage: ^13.0.5
+  flutter_staggered_grid_view: ^0.7.0
 
 dev_dependencies:
   flutter_test:
