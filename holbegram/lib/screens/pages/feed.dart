@@ -7,6 +7,8 @@ class Feed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
@@ -30,132 +32,187 @@ class Feed extends StatelessWidget {
 
             final posts = snapshot.data!.docs;
 
-            return ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final data = posts[index].data() as Map<String, dynamic>;
-                final postId = posts[index].id;
-                final userId = FirebaseAuth.instance.currentUser!.uid;
+            return StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .snapshots(),
+              builder: (context, userSnapshot) {
+                if (!userSnapshot.hasData) {
+                  return const SizedBox();
+                }
 
-                final likes = List<String>.from(data['likes'] ?? []);
-                final isLiked = likes.contains(userId);
+                final userData =
+                    userSnapshot.data!.data() as Map<String, dynamic>;
+                final saved = List<String>.from(userData['saved'] ?? []);
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 18,
-                            backgroundImage:
-                                data['profImage'] != null &&
-                                    data['profImage'].toString().isNotEmpty
-                                ? NetworkImage(data['profImage'])
-                                : null,
-                            child:
-                                data['profImage'] == null ||
-                                    data['profImage'].toString().isEmpty
-                                ? const Icon(Icons.person)
-                                : null,
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final postDoc = posts[index];
+                    final data = postDoc.data() as Map<String, dynamic>;
+                    final postId = postDoc.id;
+
+                    final likes = List<String>.from(data['likes'] ?? []);
+                    final isLiked = likes.contains(userId);
+                    final isSaved = saved.contains(postId);
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 👤 HEADER
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            data['username'] ?? 'Unknown',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundImage:
+                                    data['profImage'] != null &&
+                                        data['profImage'].toString().isNotEmpty
+                                    ? NetworkImage(data['profImage'])
+                                    : null,
+                                child:
+                                    data['profImage'] == null ||
+                                        data['profImage'].toString().isEmpty
+                                    ? const Icon(Icons.person)
+                                    : null,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                data['username'] ?? 'Unknown',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.more_vert),
+                            ],
                           ),
-                          const Spacer(),
-                          const Icon(Icons.more_vert),
-                        ],
-                      ),
-                    ),
-
-                    if (data['caption'] != null &&
-                        data['caption'].toString().isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
                         ),
-                        child: Center(
+
+                        // 📝 CAPTION
+                        if (data['caption'] != null &&
+                            data['caption'].toString().isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            child: Center(
+                              child: Text(
+                                data['caption'],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        // 🖼️ IMAGE
+                        AspectRatio(
+                          aspectRatio: 1,
+                          child: Image.network(
+                            data['postUrl'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
+                        // ❤️ ACTIONS
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              // ❤️ LIKE
+                              IconButton(
+                                icon: Icon(
+                                  isLiked
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isLiked ? Colors.red : null,
+                                ),
+                                onPressed: () async {
+                                  final postRef = FirebaseFirestore.instance
+                                      .collection('posts')
+                                      .doc(postId);
+
+                                  if (isLiked) {
+                                    await postRef.update({
+                                      'likes': FieldValue.arrayRemove([userId]),
+                                    });
+                                  } else {
+                                    await postRef.update({
+                                      'likes': FieldValue.arrayUnion([userId]),
+                                    });
+                                  }
+                                },
+                              ),
+
+                              // 💬 COMMENT (UI only)
+                              IconButton(
+                                icon: const Icon(Icons.comment_outlined),
+                                onPressed: () {},
+                              ),
+
+                              // ✈️ SHARE (UI only)
+                              IconButton(
+                                icon: const Icon(Icons.send_outlined),
+                                onPressed: () {},
+                              ),
+
+                              const Spacer(),
+
+                              // 🔖 BOOKMARK (FAVORITE)
+                              IconButton(
+                                icon: Icon(
+                                  isSaved
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
+                                ),
+                                onPressed: () async {
+                                  final userRef = FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(userId);
+
+                                  if (isSaved) {
+                                    await userRef.update({
+                                      'saved': FieldValue.arrayRemove([postId]),
+                                    });
+                                  } else {
+                                    await userRef.update({
+                                      'saved': FieldValue.arrayUnion([postId]),
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // ❤️ LIKES COUNT
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
+                          ),
                           child: Text(
-                            data['caption'],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            '${likes.length} liked',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-                      ),
 
-                    -AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.network(data['postUrl'], fit: BoxFit.cover),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              isLiked ? Icons.favorite : Icons.favorite_border,
-                              color: isLiked ? Colors.red : null,
-                            ),
-                            onPressed: () async {
-                              final postRef = FirebaseFirestore.instance
-                                  .collection('posts')
-                                  .doc(postId);
-
-                              if (isLiked) {
-                                await postRef.update({
-                                  'likes': FieldValue.arrayRemove([userId]),
-                                });
-                              } else {
-                                await postRef.update({
-                                  'likes': FieldValue.arrayUnion([userId]),
-                                });
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.comment_outlined),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.send_outlined),
-                            onPressed: () {},
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.bookmark_border),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 2,
-                      ),
-                      child: Text(
-                        '${likes.length} liked',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-                  ],
+                        const SizedBox(height: 12),
+                      ],
+                    );
+                  },
                 );
               },
             );
