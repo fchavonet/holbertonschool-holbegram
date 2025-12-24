@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../methods/auth_methods.dart';
-import '../home.dart';
 import 'methods/post_storage.dart';
 
 class AddImage extends StatefulWidget {
@@ -26,6 +25,8 @@ class _AddImageState extends State<AddImage> {
     if (picked == null) return;
 
     final bytes = await picked.readAsBytes();
+    if (!mounted) return;
+
     setState(() {
       _image = bytes;
     });
@@ -55,9 +56,10 @@ class _AddImageState extends State<AddImage> {
     if (!mounted) return;
 
     if (res == "Ok") {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const Home()));
+      _captionController.clear();
+      setState(() {
+        _image = null;
+      });
     }
   }
 
