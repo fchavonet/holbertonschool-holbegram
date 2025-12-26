@@ -6,6 +6,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 class Favorite extends StatelessWidget {
   const Favorite({super.key});
 
+  static const double spacing = 16;
+
   @override
   Widget build(BuildContext context) {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -22,7 +24,6 @@ class Favorite extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            // 🔐 DOCUMENT INEXISTANT → AUCUN FAVORI
             if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
               return const Center(
                 child: Text(
@@ -73,25 +74,19 @@ class Favorite extends StatelessWidget {
 
                 final posts = postSnapshot.data!.docs;
 
-                return Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: MasonryGridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      final data = posts[index].data() as Map<String, dynamic>;
+                return MasonryGridView.count(
+                  crossAxisCount: 1,
+                  mainAxisSpacing: spacing,
+                  crossAxisSpacing: spacing,
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final data = posts[index].data() as Map<String, dynamic>;
 
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.network(
-                          data['postUrl'],
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
+                    return AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.network(data['postUrl'], fit: BoxFit.cover),
+                    );
+                  },
                 );
               },
             );
