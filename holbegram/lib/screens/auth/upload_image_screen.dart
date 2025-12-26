@@ -1,6 +1,8 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../methods/auth_methods.dart';
 
 class AddPicture extends StatefulWidget {
@@ -22,36 +24,42 @@ class AddPicture extends StatefulWidget {
 class _AddPictureState extends State<AddPicture> {
   Uint8List? _image;
 
-  void selectImageFromGallery() async {
+  /// Picks an image from the given source and stores it locally.
+  Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
-    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: source);
 
-    if (image != null) {
-      Uint8List img = await image.readAsBytes();
-      setState(() {
-        _image = img;
-      });
-    }
+    if (image == null) return;
+
+    final Uint8List bytes = await image.readAsBytes();
+
+    setState(() {
+      _image = bytes;
+    });
   }
 
-  void selectImageFromCamera() async {
-    final ImagePicker picker = ImagePicker();
-    XFile? image = await picker.pickImage(source: ImageSource.camera);
+  /// Completes signup with the selected profile picture.
+  Future<void> _completeSignup() async {
+    await AuthMethode().signUpUser(
+      email: widget.email,
+      password: widget.password,
+      username: widget.username,
+      file: _image,
+    );
 
-    if (image != null) {
-      Uint8List img = await image.readAsBytes();
-      setState(() {
-        _image = img;
-      });
-    }
+    if (!mounted) return;
+
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: screenHeight,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -71,13 +79,13 @@ class _AddPictureState extends State<AddPicture> {
                   children: [
                     Text(
                       'Hello, ${widget.username} Welcome to\nHolbegram.',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
+                    const SizedBox(height: 6),
+                    const Text(
                       'Choose an image from your gallery or take a new one.',
                       style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
@@ -109,7 +117,7 @@ class _AddPictureState extends State<AddPicture> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: selectImageFromGallery,
+                    onPressed: () => _pickImage(ImageSource.gallery),
                     icon: const Icon(
                       Icons.photo_library_outlined,
                       color: Color.fromARGB(218, 226, 37, 24),
@@ -118,7 +126,7 @@ class _AddPictureState extends State<AddPicture> {
                   ),
                   const SizedBox(width: 64),
                   IconButton(
-                    onPressed: selectImageFromCamera,
+                    onPressed: () => _pickImage(ImageSource.camera),
                     icon: const Icon(
                       Icons.photo_camera_outlined,
                       color: Color.fromARGB(218, 226, 37, 24),
@@ -139,18 +147,7 @@ class _AddPictureState extends State<AddPicture> {
                       const Color.fromARGB(218, 226, 37, 24),
                     ),
                   ),
-                  onPressed: () {
-                    AuthMethode().signUpUser(
-                      email: widget.email,
-                      password: widget.password,
-                      username: widget.username,
-                      file: _image,
-                    );
-
-                    if (!mounted) return;
-
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
+                  onPressed: _completeSignup,
                   child: const Text(
                     'Next',
                     style: TextStyle(color: Colors.white),

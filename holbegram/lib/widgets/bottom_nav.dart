@@ -16,7 +16,9 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   int _currentIndex = 0;
-  late PageController _pageController;
+  late final PageController _pageController;
+
+  static const Color _activeColor = Color.fromARGB(218, 226, 37, 24);
 
   @override
   void initState() {
@@ -30,12 +32,14 @@ class _BottomNavState extends State<BottomNav> {
     super.dispose();
   }
 
+  /// Updates the selected index when swiping pages.
   void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
     });
   }
 
+  /// Navigates to the selected page from the bottom bar.
   void _onItemSelected(int index) {
     _pageController.jumpToPage(index);
     setState(() {
@@ -49,7 +53,7 @@ class _BottomNavState extends State<BottomNav> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: [Feed(), Search(), AddImage(), Favorite(), Profile()],
+        children: const [Feed(), Search(), AddImage(), Favorite(), Profile()],
       ),
       bottomNavigationBar: BottomNavyBar(
         selectedIndex: _currentIndex,
@@ -58,58 +62,30 @@ class _BottomNavState extends State<BottomNav> {
         curve: Curves.easeInBack,
         onItemSelected: _onItemSelected,
         items: [
-          BottomNavyBarItem(
-            icon: const Icon(Icons.home_outlined),
-            title: const Text(
-              'Home',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
-            activeColor: const Color.fromARGB(218, 226, 37, 24),
-            inactiveColor: Colors.black,
-          ),
-          BottomNavyBarItem(
-            icon: const Icon(Icons.search),
-            title: const Text(
-              'Search',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
-            activeColor: const Color.fromARGB(218, 226, 37, 24),
-            inactiveColor: Colors.black,
-          ),
-          BottomNavyBarItem(
-            icon: const Icon(Icons.add_box_outlined),
-            title: const Text(
-              'Add',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
-            activeColor: const Color.fromARGB(218, 226, 37, 24),
-            inactiveColor: Colors.black,
-          ),
-          BottomNavyBarItem(
-            icon: const Icon(Icons.favorite_border),
-            title: const Text(
-              'Favorites',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
-            activeColor: const Color.fromARGB(218, 226, 37, 24),
-            inactiveColor: Colors.black,
-          ),
-          BottomNavyBarItem(
-            icon: const Icon(Icons.person_outline),
-            title: const Text(
-              'Profile',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
-            activeColor: const Color.fromARGB(218, 226, 37, 24),
-            inactiveColor: Colors.black,
-          ),
+          _navItem(icon: Icons.home_outlined, label: 'Home'),
+          _navItem(icon: Icons.search, label: 'Search'),
+          _navItem(icon: Icons.add_box_outlined, label: 'Add'),
+          _navItem(icon: Icons.favorite_border, label: 'Favorites'),
+          _navItem(icon: Icons.person_outline, label: 'Profile'),
         ],
       ),
+    );
+  }
+
+  /// Builds a BottomNavyBar item with consistent styling.
+  static BottomNavyBarItem _navItem({
+    required IconData icon,
+    required String label,
+  }) {
+    return BottomNavyBarItem(
+      icon: Icon(icon),
+      title: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 25, fontFamily: 'Billabong'),
+      ),
+      activeColor: _activeColor,
+      inactiveColor: Colors.black,
     );
   }
 }

@@ -4,16 +4,16 @@ class TextFieldInput extends StatelessWidget {
   final TextEditingController controller;
   final bool ispassword;
   final String hintText;
-  final Widget? suffixIcon;
   final TextInputType keyboardType;
+  final Widget? suffixIcon;
 
   const TextFieldInput({
     super.key,
     required this.controller,
     required this.ispassword,
     required this.hintText,
-    this.suffixIcon,
     required this.keyboardType,
+    this.suffixIcon,
   });
 
   @override
@@ -30,26 +30,16 @@ class TextFieldInput extends StatelessWidget {
         contentPadding: const EdgeInsets.all(8),
         suffixIcon: suffixIcon == null
             ? null
-            : SizedBox(height: 24, width: 24, child: Center(child: suffixIcon)),
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.transparent,
-            style: BorderStyle.none,
-          ),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.transparent,
-            style: BorderStyle.none,
-          ),
-        ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.transparent,
-            style: BorderStyle.none,
-          ),
-        ),
+            : SizedBox(width: 24, height: 24, child: Center(child: suffixIcon)),
+        border: _border,
+        enabledBorder: _border,
+        focusedBorder: _border,
       ),
     );
   }
+
+  /// Shared input border (no visible border).
+  static const OutlineInputBorder _border = OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none),
+  );
 }

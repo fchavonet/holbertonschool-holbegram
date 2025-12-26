@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../widgets/text_field.dart';
 import './login_screen.dart';
 import './upload_image_screen.dart';
@@ -33,12 +34,41 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
+  /// Navigates to the profile picture upload screen.
+  void _goToUploadPicture() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddPicture(
+          email: widget.emailController.text,
+          username: widget.usernameController.text,
+          password: widget.passwordController.text,
+        ),
+      ),
+    );
+  }
+
+  /// Navigates to the login screen.
+  void _goToLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LoginScreen(
+          emailController: TextEditingController(),
+          passwordController: TextEditingController(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: screenHeight,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -64,9 +94,9 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.emailController,
-                      ispassword: false,
                       hintText: 'Email',
                       keyboardType: TextInputType.emailAddress,
+                      ispassword: false,
                       suffixIcon: null,
                     ),
 
@@ -74,9 +104,9 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.usernameController,
-                      ispassword: false,
                       hintText: 'Full Name',
                       keyboardType: TextInputType.text,
+                      ispassword: false,
                       suffixIcon: null,
                     ),
 
@@ -84,9 +114,9 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.passwordController,
-                      ispassword: !_passwordVisible,
                       hintText: 'Password',
                       keyboardType: TextInputType.visiblePassword,
+                      ispassword: !_passwordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
                           _passwordVisible
@@ -106,9 +136,9 @@ class _SignUpState extends State<SignUp> {
 
                     TextFieldInput(
                       controller: widget.passwordConfirmController,
-                      ispassword: !_passwordVisible,
                       hintText: 'Confirm Password',
                       keyboardType: TextInputType.visiblePassword,
+                      ispassword: !_passwordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
                           _passwordVisible
@@ -135,18 +165,7 @@ class _SignUpState extends State<SignUp> {
                             const Color.fromARGB(218, 226, 37, 24),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AddPicture(
-                                email: widget.emailController.text,
-                                username: widget.usernameController.text,
-                                password: widget.passwordController.text,
-                              ),
-                            ),
-                          );
-                        },
+                        onPressed: _goToUploadPicture,
                         child: const Text(
                           'Sign up',
                           style: TextStyle(color: Colors.white),
@@ -161,17 +180,7 @@ class _SignUpState extends State<SignUp> {
                       children: [
                         const Text('Have an account? '),
                         TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => LoginScreen(
-                                  emailController: TextEditingController(),
-                                  passwordController: TextEditingController(),
-                                ),
-                              ),
-                            );
-                          },
+                          onPressed: _goToLogin,
                           child: const Text(
                             'Log in',
                             style: TextStyle(

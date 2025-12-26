@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../widgets/text_field.dart';
-import 'signup_screen.dart';
 import '../../methods/auth_methods.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
@@ -27,12 +28,28 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  /// Handles user login.
+  Future<void> _login() async {
+    final String res = await AuthMethode().login(
+      email: widget.emailController.text,
+      password: widget.passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (res != 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: screenHeight,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -53,9 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFieldInput(
                       controller: widget.emailController,
-                      ispassword: false,
                       hintText: 'Email',
                       keyboardType: TextInputType.emailAddress,
+                      ispassword: false,
                       suffixIcon: null,
                     ),
 
@@ -63,9 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFieldInput(
                       controller: widget.passwordController,
-                      ispassword: !_passwordVisible,
                       hintText: 'Password',
                       keyboardType: TextInputType.visiblePassword,
+                      ispassword: !_passwordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
                           _passwordVisible
@@ -92,21 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const Color.fromARGB(218, 226, 37, 24),
                           ),
                         ),
-                        onPressed: () async {
-                          final res = await AuthMethode().login(
-                            email: widget.emailController.text,
-                            password: widget.passwordController.text,
-                          );
-
-                          if (!mounted) return;
-
-                          if (res == "success") {
-                          } else {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text(res)));
-                          }
-                        },
+                        onPressed: _login,
                         child: const Text(
                           'Log in',
                           style: TextStyle(color: Colors.white),
@@ -129,55 +132,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 24),
 
-                    Column(
-                      children: [
-                        const Divider(thickness: 2),
-                        const SizedBox(height: 12),
+                    const Divider(thickness: 2),
+                    const SizedBox(height: 12),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Don't have an account "),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => SignUp(
-                                      emailController: TextEditingController(),
-                                      usernameController:
-                                          TextEditingController(),
-                                      passwordController:
-                                          TextEditingController(),
-                                      passwordConfirmController:
-                                          TextEditingController(),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Sign up',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(218, 226, 37, 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account "),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => SignUp(
+                                  emailController: TextEditingController(),
+                                  usernameController: TextEditingController(),
+                                  passwordController: TextEditingController(),
+                                  passwordConfirmController:
+                                      TextEditingController(),
                                 ),
                               ),
+                            );
+                          },
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(218, 226, 37, 24),
                             ),
-                          ],
+                          ),
                         ),
+                      ],
+                    ),
 
-                        const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                        Row(
-                          children: const [
-                            Expanded(child: Divider(thickness: 2)),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Text('OR'),
-                            ),
-                            Expanded(child: Divider(thickness: 2)),
-                          ],
+                    Row(
+                      children: const [
+                        Expanded(child: Divider(thickness: 2)),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text('OR'),
                         ),
+                        Expanded(child: Divider(thickness: 2)),
                       ],
                     ),
 

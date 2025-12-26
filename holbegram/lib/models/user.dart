@@ -1,18 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Users {
+  // Identity.
   final String uid;
   final String email;
   final String username;
+
+  // Profile.
   final String bio;
   final String photoUrl;
+  final String searchKey;
+
+  // Relations / content.
   final List<dynamic> followers;
   final List<dynamic> following;
   final List<dynamic> posts;
   final List<dynamic> saved;
-  final String searchKey;
 
-  Users({
+  const Users({
     required this.uid,
     required this.email,
     required this.username,
@@ -25,23 +30,25 @@ class Users {
     required this.searchKey,
   });
 
+  /// Creates a Users instance.
   static Users fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
+    final Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
 
     return Users(
-      uid: snapshot['uid'],
-      email: snapshot['email'],
-      username: snapshot['username'],
-      bio: snapshot['bio'],
-      photoUrl: snapshot['photoUrl'],
-      followers: snapshot['followers'],
-      following: snapshot['following'],
-      posts: snapshot['posts'],
-      saved: snapshot['saved'],
-      searchKey: snapshot['searchKey'],
+      uid: data['uid'] ?? '',
+      email: data['email'] ?? '',
+      username: data['username'] ?? '',
+      bio: data['bio'] ?? '',
+      photoUrl: data['photoUrl'] ?? '',
+      followers: data['followers'] is List ? data['followers'] : [],
+      following: data['following'] is List ? data['following'] : [],
+      posts: data['posts'] is List ? data['posts'] : [],
+      saved: data['saved'] is List ? data['saved'] : [],
+      searchKey: data['searchKey'] ?? '',
     );
   }
 
+  /// Converts the Users object to a Firestore-compatible map.
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,

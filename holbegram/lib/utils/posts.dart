@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/pages/methods/post_storage.dart';
-
 class Posts extends StatefulWidget {
   const Posts({super.key});
 
@@ -24,130 +22,111 @@ class _PostsState extends State<Posts> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final docs = snapshot.data!.docs;
+        final List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
 
         return ListView.builder(
           itemCount: docs.length,
           itemBuilder: (context, index) {
-            final doc = docs[index];
-            final data = doc.data() as Map<String, dynamic>;
+            final QueryDocumentSnapshot doc = docs[index];
+            final Map<String, dynamic> data =
+                doc.data() as Map<String, dynamic>;
 
-            final String postId = doc.id;
-            final String publicId = (data['publicId'] ?? '') as String;
-            final String username = (data['username'] ?? '') as String;
-            final String caption = (data['caption'] ?? '') as String;
-            final String profImage = (data['profImage'] ?? '') as String;
-            final String postUrl = (data['postUrl'] ?? '') as String;
+            final String username = data['username'] ?? '';
+            final String caption = data['caption'] ?? '';
+            final String profImage = data['profImage'] ?? '';
+            final String postUrl = data['postUrl'] ?? '';
 
-            return SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                height: 540,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: Image.network(
-                                profImage,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.network(
-                                    'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png',
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
+            return Container(
+              margin: const EdgeInsets.all(8),
+              height: 540,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Column(
+                children: [
+                  /// Header.
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: ClipOval(
+                            child: Image.network(
+                              profImage,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                return Image.network(
+                                  'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png',
+                                  fit: BoxFit.cover,
+                                );
+                              },
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            username,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.more_horiz),
-                            onPressed: () async {
-                              await PostStorage().deletePost(postId, publicId);
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          username,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        const Icon(Icons.more_horiz),
+                      ],
+                    ),
+                  ),
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Post Deleted')),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                  /// Caption.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(caption),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(caption),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Image.
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      postUrl,
                       width: 350,
                       height: 350,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: Image.network(
-                          postUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.black12,
-                              child: const Center(
-                                child: Icon(Icons.broken_image_outlined),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Container(
+                          width: 350,
+                          height: 350,
+                          color: Colors.black12,
+                          child: const Center(
+                            child: Icon(Icons.broken_image_outlined),
+                          ),
+                        );
+                      },
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.favorite_border),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.mode_comment_outlined),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.send_outlined),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.bookmark_border),
-                          ),
-                        ],
-                      ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Actions.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.favorite_border),
+                        SizedBox(width: 8),
+                        Icon(Icons.mode_comment_outlined),
+                        SizedBox(width: 8),
+                        Icon(Icons.send_outlined),
+                        Spacer(),
+                        Icon(Icons.bookmark_border),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
