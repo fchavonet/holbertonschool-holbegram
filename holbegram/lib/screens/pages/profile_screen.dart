@@ -142,7 +142,10 @@ class Profile extends StatelessWidget {
                               posts[index].data() as Map<String, dynamic>;
                           final String url = (data['postUrl'] ?? '') as String;
 
-                          return Image.network(url, fit: BoxFit.cover);
+                          return AspectRatio(
+                            aspectRatio: 1, // ✅ FORMAT CARRÉ
+                            child: Image.network(url, fit: BoxFit.cover),
+                          );
                         },
                       );
                     },
