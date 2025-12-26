@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../methods/auth_methods.dart';
+import '../../methods/auth_methods.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;

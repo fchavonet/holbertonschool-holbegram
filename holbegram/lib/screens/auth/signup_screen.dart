@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/text_field.dart';
-import 'login_screen.dart';
-import '../upload_image_screen.dart';
+import './login_screen.dart';
+import './upload_image_screen.dart';
 
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
