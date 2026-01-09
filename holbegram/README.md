@@ -976,18 +976,19 @@ A release APK is provided to allow quick testing of the application without sett
 4. Create and publish posts.
 
 ![Screenshot](./assets/images/screenshots/add.webp)
+![Screenshot](./assets/images/screenshots/add_image.webp)
 
 5. Like and save posts.
 
 ![Screenshot](./assets/images/screenshots/home.webp)
 
-6. View your favorites.
-
-![Screenshot](./assets/images/screenshots/favorites.webp)
-
-7. Search for posts.
+6. Search for posts.
 
 ![Screenshot](./assets/images/screenshots/search.webp)
+
+7. View your favorites.
+
+![Screenshot](./assets/images/screenshots/favorites.webp)
 
 8. View and manage your profile.
 
